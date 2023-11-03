@@ -9,4 +9,5 @@
   enhanced-constructors.m
   genera.m
   read-write.m
+  mod2image.m
 }

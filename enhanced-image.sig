@@ -28,9 +28,9 @@ S,AutmuOinGL4modN,,0,3,0,0,0,0,0,0,0,148,,0,0,20,,0,0,19,,178,-38,-38,-38,-38,-3
 S,FixedSubspace,,0,1,0,0,0,0,0,0,0,178,,107,-38,-38,-38,-38,-38
 S,HasPolarizedElementOfDegree,return an element mu of O such that mu^2 + d*disc(O) = 0 if it exists,0,2,0,0,0,0,0,0,0,148,,0,0,19,,36,20,-38,-38,-38,-38
 S,DegreeOfPolarizedElement,degree of mu,0,2,0,0,0,0,0,0,0,-1,,0,0,19,,148,-38,-38,-38,-38,-38
-S,IsTwisting,"(O,mu) is twisting (of degree del = -mu^2/disc(O)) if there exists chi in O and N_Bx(O) such that chi^2 = m, m|Disc(O) and mu*chi = -chi*mu",0,2,0,0,0,0,0,0,0,20,,0,0,19,,36,-38,-38,-38,-38,-38
-S,Aut,,0,2,0,0,0,0,0,0,0,20,,0,0,19,,-1,-38,-38,-38,-38,-38
+S,IsTwisting,"(O,mu) is twisting (of degree del = -mu^2/disc(O)) if there exists chi in O and N_Bx(O) such that chi^2 = m, m|Disc(O) and mu*chi = -chi*mu",0,2,0,0,0,0,0,0,0,18,,0,0,19,,36,-38,-38,-38,-38,-38
 S,Aut,,0,2,0,0,0,0,0,0,0,18,,0,0,19,,-1,-38,-38,-38,-38,-38
+S,Aut,,0,2,0,0,0,0,0,0,0,20,,0,0,19,,-1,-38,-38,-38,-38,-38
 S,EnhancedCosetRepresentation,Make the coset representation of H in G,0,4,0,0,0,0,0,0,0,20,,0,0,19,,0,0,178,,0,0,178,,-1,-38,-38,-38,-38,-38
 S,EnhancedRamificationData,return the image of the elliptic elements under the monodromy map,0,4,0,0,0,0,0,0,0,20,,0,0,19,,0,0,178,,0,0,178,,-1,-38,-38,-38,-38,-38
 S,EnhancedGenus,compute the genus,0,4,0,0,0,0,0,0,0,20,,0,0,19,,0,0,178,,0,0,178,,-1,-38,-38,-38,-38,-38

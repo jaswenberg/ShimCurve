@@ -147,14 +147,20 @@ end intrinsic;
 
 
 intrinsic SquarefreeFactorization(x::FldRatElt) -> FldRatElt
-  {squarefree factorization of a rational number}
+  {x = a*q^2 where a is a squarefree integer, return a, q}
   numx:=Numerator(x);
   denx:=Denominator(x);
 
   numa,c:=SquarefreeFactorization(numx);
   dena,d:=SquarefreeFactorization(denx);
 
-  return numa/dena;
+  a:=numa*dena;
+  assert IsSquarefree(a);
+  assert a in Integers();
+  tr,q:=IsSquare(x/a);
+  assert tr;
+  assert x eq a*q^2;
+  return a, q;
 end intrinsic;
 
 

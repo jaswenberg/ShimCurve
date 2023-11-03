@@ -435,13 +435,13 @@ intrinsic DegreeOfPolarizedElement(O::AlgQuatOrd,mu:AlgQuatOrdElt) -> RngIntElt
   {degree of mu}
   tr,nmu:= IsScalar(mu^2);
   disc:=Discriminant(O);
-  del:=-nmu/disc;
+  del:=SquarefreeFactorization(-nmu/disc);
   assert IsCoercible(Integers(),del);
   assert IsSquarefree(Integers()!del);
   return Integers()!del;
 end intrinsic;
 
-intrinsic IsTwisting(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> BoolElt
+intrinsic IsTwisting(O::AlgQuatOrd,mu::AlgQuatElt) -> BoolElt
   {(O,mu) is twisting (of degree del = -mu^2/disc(O)) if there exists chi in O and N_Bx(O)
    such that chi^2 = m, m|Disc(O) and mu*chi = -chi*mu }
 
@@ -460,8 +460,8 @@ intrinsic IsTwisting(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> BoolElt
       chi:=isom(j1);
       if mu*chi eq -chi*mu and chi in O then
         twisted_basis:=[1,mu,chi,mu*chi];
-        Omuchi:=QuaternionOrder(Integers(), twisted_basis);   
-        assert IsIsomorphic(O,Omuchi);
+        //Omuchi:=QuaternionOrder(Integers(), twisted_basis);   
+        //assert IsIsomorphic(O,Omuchi);
         return true, m,twisted_basis;
       end if;
     end if;
@@ -471,14 +471,15 @@ end intrinsic;
 
 
 
-intrinsic Aut(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> Any
+intrinsic Aut(O::AlgQuatOrd,mu::AlgQuatElt) -> Any
   {}
 
   assert IsScalar(mu^2);
   tr,eta:=IsScalar(mu^2);
   disc:=Discriminant(O);
   Rx<x>:=PolynomialRing(Rationals());
-  Em<v>:=NumberField(x^2-eta);
+  sqeta,c:=SquarefreeFactorization(eta);
+  Em<v>:=NumberField(x^2-sqeta);
   //Rm:=Order([1,v]);
   cyc,Czeta,zeta:=IsCyclotomic(Em);
   //Zzeta:=Integers(Czeta);
@@ -487,7 +488,7 @@ intrinsic Aut(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> Any
   BxmodQx:=QuaternionAlgebraModuloScalars(B);
 
   if cyc eq true then  
-    sqeta,c:=SquarefreeFactorization(Integers()!eta);
+    //sqeta,c:=SquarefreeFactorization(eta);
     assert sqeta in {-1,-3};
     if sqeta eq -1 then 
       cyc_order:=4;
@@ -531,9 +532,10 @@ intrinsic Aut(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> Any
 end intrinsic;
 
 
-intrinsic Aut(O::AlgQuatOrd,mu::AlgQuatElt) -> Any
+intrinsic Aut(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> Any
   {}
-  return Aut(O,O!mu);
+  B:=QuaternionAlgebra(O);
+  return Aut(O,B!mu);
 end intrinsic;
 
 
@@ -738,7 +740,7 @@ intrinsic AllEnhancedSubgroups(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : mi
         printf "%o ? %o ? %o ? %o ? %o ? %o ? %o ? %o \n", s`genus, s`index, s`order, s`fixedsubspace, s`endomorphism_representation, s`AutmuO_norms, s`split, s`generators, Sprint(s`ramification_data : oneline:=true);
       end for;
       if write eq true then 
-        filename:=Sprintf("QM-Mazur/genera-tables/genera-D%o-deg%o-N%o.m",D,del,N);
+        filename:=Sprintf("ShimCurve/genera-tables/genera-D%o-deg%o-N%o.m",D,del,N);
         Write(filename,Sprintf("%m;",B));
         Write(filename,Sprintf("%o;",Basis(O)));
         Write(filename,Sprintf("%o;",N));
