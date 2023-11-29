@@ -25,8 +25,19 @@ intrinsic EnhancedCosetRepresentation(G::GrpMat,H::GrpMat,Gplus::GrpMat) -> HomG
   return piH;
 end intrinsic;
 
+
+intrinsic SemidirectToNormalizer(O::AlgQuatOrd,mu::AlgQuatOrdElt,h::AlgQuatEnhElt) -> AlgQuatProjElt
+  {the map from the semidirect product to the normalizer.}
+  w:=(h`element[1])`element;
+  x:=h`element[2];
+  return Parent(h`element[1])!(w*x);
+end intrinsic;
+
+
+
 intrinsic SemidirectToNormalizerKernel(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> SeqEnum 
-  {return the cyclic subgroup of O^x}
+  {return the kernel of the map form the enhanced semidirect product to N_B^x(O). 
+  It is necessarily cyclic and the second value is the generator of the group}
   B:=QuaternionAlgebra(O);
   Ocirc:=EnhancedSemidirectProduct(O);
   AutFull,autmuOseq:=Aut(O,mu);
@@ -49,12 +60,14 @@ intrinsic SemidirectToNormalizerKernel(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> SeqEn
 end intrinsic;
 
 intrinsic SemidirectToNormalizerKernel(O::AlgQuatOrd,mu::AlgQuatElt) -> SeqEnum 
-  {return the cyclic subgroup of O^x}
+  {return the kernel of the map form the enhanced semidirect product to N_B^x(O). 
+  It is necessarily cyclic and the second value is the generator of the group}
   return SemidirectToNormalizerKernel(O,O!mu);
 end intrinsic;
 
-intrinsic NormalizerToAutmuO(a::AlgQuatOrdElt,mu::AlgQuatOrdElt,O::AlgQuatOrd) -> AlgQuatEnhElt 
-  {}
+intrinsic NormalizerToAutmuO(O::AlgQuatOrd,mu::AlgQuatOrdElt,a::AlgQuatOrdElt) -> AlgQuatEnhElt 
+  {Lift an element a of the Normalizer of O to the enhanced semidirect product, which is well defined up to 
+  the kernel of this map (given by SemidirectToNormalizerKernel)}
   Ocirc:=EnhancedSemidirectProduct(O);
   AutFull,autmuOseq:=Aut(O,mu);
   ker,kergen:=SemidirectToNormalizerKernel(O,mu);
@@ -86,20 +99,23 @@ intrinsic NormalizerToAutmuO(a::AlgQuatOrdElt,mu::AlgQuatOrdElt,O::AlgQuatOrd) -
   return W[1];
 end intrinsic;
 
-intrinsic NormalizerToAutmuO(a::AlgQuatElt,mu::AlgQuatElt,O::AlgQuatOrd) -> AlgQuatEnhElt 
-  {}
-  return NormalizerToAutmuO(O!a,O!mu,O);
+intrinsic NormalizerToAutmuO(O::AlgQuatOrd,mu::AlgQuatElt,a::AlgQuatElt) -> AlgQuatEnhElt 
+  {Lift an element a of the Normalizer of O to the enhanced semidirect product, which is well defined up to 
+  the kernel of this map (given by SemidirectToNormalizerKernel)}
+  return NormalizerToAutmuO(O,O!mu,O!a);
 end intrinsic;
 
 
-intrinsic NormalizerToAutmuO(a::AlgQuatOrdElt,mu::AlgQuatElt,O::AlgQuatOrd) -> AlgQuatEnhElt 
-  {}
-  return NormalizerToAutmuO(a,O!mu,O);
+intrinsic NormalizerToAutmuO(O::AlgQuatOrd,mu::AlgQuatElt,a::AlgQuatOrdElt) -> AlgQuatEnhElt 
+  {Lift an element a of the Normalizer of O to the enhanced semidirect product, which is well defined up to 
+  the kernel of this map (given by SemidirectToNormalizerKernel)}
+  return NormalizerToAutmuO(O,O!mu,a);
 end intrinsic;
 
-intrinsic NormalizerToAutmuO(a::AlgQuatElt,mu::AlgQuatOrdElt,O::AlgQuatOrd) -> AlgQuatEnhElt 
-  {}
-  return NormalizerToAutmuO(O!a,mu,O);
+intrinsic NormalizerToAutmuO(O::AlgQuatOrd,mu::AlgQuatOrdElt,a::AlgQuatElt) -> AlgQuatEnhElt 
+  {Lift an element a of the Normalizer of O to the enhanced semidirect product, which is well defined up to 
+  the kernel of this map (given by SemidirectToNormalizerKernel)}
+  return NormalizerToAutmuO(O,mu,O!a);
 end intrinsic;
 
 
@@ -111,9 +127,13 @@ intrinsic NormalizerPlusGenerators(O::AlgQuatOrd) -> SeqEnum
     B:=QuaternionAlgebra(O);
     tr,map:=IsIsomorphic(B6,B : Isomorphism:=true);
     assert tr;
-    B6elliptic_elts:=[ 3+3*i6+j6+i6*j6, 1+i6, 3*i6 + i6*j6];
+    B6elliptic_elts:=[3*i6 + i6*j6, 1+i6, 3+3*i6+j6+i6*j6];
     Oelliptic_elts:=[ O!map(a) : a in B6elliptic_elts ];
     assert Set([ Norm(a) : a in Oelliptic_elts ]) eq {2,6,12};
+
+    e2,e4,e6:=Explode(Oelliptic_elts);
+    assert IsScalar(e6^6); assert IsScalar(e4^4); assert IsScalar(e2^2);
+    assert IsScalar(&*Oelliptic_elts);
     return Oelliptic_elts;
   elif Discriminant(O) eq 10 then 
     //Elkies 
@@ -162,7 +182,7 @@ intrinsic NormalizerPlusGeneratorsEnhanced(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> T
   ker,kergen:=SemidirectToNormalizerKernel(O,mu);
   Ocirc:=EnhancedSemidirectProduct(O);
   Nplus:=NormalizerPlusGenerators(O);
-  return [ Ocirc!NormalizerToAutmuO(O!a,O!mu,O) : a in NormalizerPlusGenerators(O) ] cat [Ocirc!kergen];
+  return [ Ocirc!NormalizerToAutmuO(O,O!mu,O!a) : a in NormalizerPlusGenerators(O) ] /*cat [Ocirc!kergen]*/;
 end intrinsic;
 
 intrinsic NormalizerPlusGeneratorsEnhanced(O::AlgQuatOrd,mu::AlgQuatElt) -> Tup 
@@ -202,7 +222,7 @@ end intrinsic;
 intrinsic EnhancedEllipticElements(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> SeqEnum 
   {return the elliptic elements}
   Ocirc:=EnhancedSemidirectProduct(O);
-  return [ Ocirc!NormalizerToAutmuO(a,mu,O) : a in NormalizerPlusGenerators(O) ];
+  return [ Ocirc!NormalizerToAutmuO(O,mu,a) : a in NormalizerPlusGenerators(O) ];
 end intrinsic;
 
 intrinsic EnhancedEllipticElements(O::AlgQuatOrd,mu::AlgQuatElt) -> SeqEnum

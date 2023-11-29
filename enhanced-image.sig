@@ -12,12 +12,14 @@ S,UnitGroupToGL4,"O is an order over R, this returns a matrix [lambda_g] wrt to 
 S,UnitGroupToGL4,"O is an order over R, this returns a matrix [lambda_g] wrt to a basis which is the right regular representation lambda_x : y --> y*x where g in GL_1(O)",0,1,0,0,0,0,0,0,0,AlgQuatOrdResElt,,180,-38,-38,-38,-38,-38
 S,UnitGroupToGL4modN,"O is an order over R, this returns a matrix [lambda_g] wrt to a basis which is the right regular representation lambda_g : g --> b*g where g in GL_1(O)",0,2,0,0,0,0,0,0,0,148,,0,0,20,,180,-38,-38,-38,-38,-38
 S,EnhancedSemidirectInGL4,create the map from the semidirect product to GL4,0,1,0,0,0,0,0,0,0,AlgQuatEnh,,175,-38,-38,-38,-38,-38
+S,EnhancedSemidirectInGL4,create the map from the semidirect product to GL4,0,1,0,0,0,0,0,0,0,19,,175,-38,-38,-38,-38,-38
 S,EnhancedSemidirectInGL4modN,create the map from the semidirect product to GL4,0,2,0,0,0,0,0,0,0,148,,0,0,AlgQuatEnh,,175,-38,-38,-38,-38,-38
+S,EnhancedSemidirectInGL4modN,create the map from the semidirect product to GL4,0,2,0,0,0,0,0,0,0,148,,0,0,19,,175,-38,-38,-38,-38,-38
 S,EnhancedElementInGL4,the enhanced element in GL4,0,1,0,0,0,0,0,0,0,AlgQuatEnhElt,,180,-38,-38,-38,-38,-38
 S,EnhancedElementInGL4modN,the enhanced element in GL4,0,2,0,0,0,0,0,0,0,148,,0,0,AlgQuatEnhElt,,180,-38,-38,-38,-38,-38
 S,EnhancedImagePermutation,"AutmuO is a map from a finite group C -> B^x, which is isomorphic onto the image in B^x/Q^x. We create the semidirect product of ONx by AutmuO, using AutomorphismModN as the map theta: AutmuO -> Aut(ONx)",0,2,0,0,0,0,0,0,0,AlgQuatOrdRes,,0,0,175,,-27,-38,-38,-38,-38,-38
 S,EnhancedImagePermutation,"AutmuO is a map from a finite group C -> B^x, which is isomorphic onto the image in B^x/Q^x. We create the semidirect product of ONx by AutmuO, using AutomorphismModN as the map theta: AutmuO -> Aut(ONx)",0,3,0,0,0,0,0,0,0,148,,0,0,19,,0,0,-1,,-27,-38,-38,-38,-38,-38
-S,EnhancedElementRecord,"given <w,x> in Autmu(O) rtimes (O/N) return <w,x> as a record along with its embedding in GL_4xGL_4 and just GL_4",0,1,0,0,0,0,0,0,0,-1,,-1,-38,-38,-38,-38,-38
+S,EnhancedElementRecord,"given <w,x> in Autmu(O) rtimes (O/N)^x or Autmu(O) rtimes O^x return <w,x> as a record along with its embedding in GL_4xGL_4 and just GL_4",0,1,0,0,0,0,0,0,0,AlgQuatEnhElt,,-1,-38,-38,-38,-38,-38
 S,EnhancedImageGL4,,0,2,0,0,0,0,0,0,0,AlgQuatOrdRes,,0,0,175,,178,-38,-38,-38,-38,-38
 S,EnhancedImageGL4,,0,3,0,0,0,0,0,0,0,148,,0,0,19,,0,0,175,,178,-38,-38,-38,-38,-38
 S,EnhancedImageGL4,,0,3,0,0,0,0,0,0,0,148,,0,0,18,,0,0,19,,178,-38,-38,-38,-38,-38

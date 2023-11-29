@@ -4,7 +4,7 @@
 
 
 MakeGeneraTableOfGenus:= function(D,del,N : genus:=0, IsSplit:=true, torsion:=[ ])
-  filename:=Sprintf("QM-Mazur/genera-tables/genera-D%o-deg%o-N%o.m",D,del,N);
+  filename:=Sprintf("ShimCurve/genera-tables/genera-D%o-deg%o-N%o.m",D,del,N);
   r:=Open(filename,"r");
   if torsion eq [] then    
     possible_tors:=[  [2],[2,2],[3],[2,3],[4], [2,4], [2,2,2], [2,2,3],[3,4],[4,4], [2,2,4] ];
@@ -16,28 +16,30 @@ MakeGeneraTableOfGenus:= function(D,del,N : genus:=0, IsSplit:=true, torsion:=[ 
   endogroup_latex:=     [    "D_2",   "D_2", "D_3",  "D_3", "D_4", "D_6" ];
 
   lines:=[];
+  count:=0;
   while true do
+    count:=count+1;
     line :=Gets(r);
     if IsEof(line) then
       break;
     end if;
     
-    if "<" in line then 
-      split:=Split(line,"<");
-      if split[1] notin lines then 
+    if count ge 7 then 
+      //split:=Split(line,"<");
+      //if split[1] notin lines then 
         //split[1];
-        Append(~lines,split[1]);
-      end if;
+        Append(~lines,line);
+      //end if;
     end if;
   end while;
 
 
-  tors_list:= [ eval(Split(line,"||")[4]) : line in lines ];
+  tors_list:= [ eval(Split(line,"?")[4]) : line in lines ];
   ParallelSort(~tors_list,~lines);
 
   data1:=[];
   for line in lines do
-    split:=Split(line,"||");
+    split:=Split(line,"?");
     tors:=eval(split[4]);
     endogroup:=split[5];
 
@@ -90,9 +92,9 @@ end function;
 
 
 D:=6;
-del:=6;
-N:=6;
-MakeGeneraTable(D,del,N : genus_range:=[0..100]);
+del:=2;
+N:=4;
+MakeGeneraTable(D,del,N : torsion:=[[4]], genus_range:=[0..2]);
 
 invariants:=[ [4], [2,4], [2,2,2], [2,2,3],[3,4],[4,4], [2,2,4] ];
 

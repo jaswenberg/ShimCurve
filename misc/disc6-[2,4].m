@@ -49,13 +49,42 @@ X:=EllipticCurve(S!x^3 + 27/242*x + 189/10648,S!0);
 KX<x,y> := FunctionField(X);
 phi:= (864/1331*x^9 + 34992/161051*x^7 + 61236/1771561*x^6 + 472392/19487171*x^5 + 1653372/214358881*x^4 + 59049/38974342*x^3 + 11160261/25937424601*x^2 + 78121827/1141246682444*x + 182284263/50214854027536)/(x^12 + 54/121*x^10 + 54/121*x^9 + 2187/29282*x^8 + 2187/14641*x^7 + 98415/1771561*x^6 + 59049/3543122*x^5 + 38795193/3429742096*x^4 + 610173/857435524*x^3 + 129140163/207499396808*x^2 + 531441/51874849202*x + 531441/51874849202);
 
-A,map:=MordellWeilGroup(X); //Z/2 + Z
+BadPrimes(X); //[2,3,11]; want to twist these away;
+//[ BadPrimes(QuadraticTwist(X,11*a)) : a in [1,-1,2,-2,3,-3,6,-6] ];
+
+[ [a,Rank(QuadraticTwist(X,11*a))] : a in [1,-1,2,-2,3,-3,6,-6] ];
+[
+[ 1, 0 ],
+[ -1, 0 ],
+[ 2, 0 ],
+[ -2, 0 ],
+[ 3, 1 ],
+[ -3, 0 ],
+[ 6, 0 ],
+[ -6, 0 ]
+]
+
+Xd:=QuadraticTwist(X,33);
+K<u>:=QuadraticField(33);
+XK:=ChangeRing(X,K);
+XdK:=ChangeRing(Xd,K);
+tr,map:=IsIsomorphic(XdK,XK);
+//Elliptic curve isomorphism from: CrvEll: XdK to CrvEll: XK
+//Taking (x : y : 1) to (1/33*x : -1/1089*u*y : 1)
+
+
+KXd<xd,yd> := FunctionField(Xd);
+phid:=KXd!eval(ReplaceString(Sprint(phi),"x","(xd/33)"));
+
+
+
+A,map:=MordellWeilGroup(Xd); //Z/2 + Z
 Q:=map(A.2);  //generator
 //checking ramification indices to match up with Baba-Granath's j-line we must 
 //do the linear fractional transformation 0-->oo, 1-->0, oo->--16/27 which is LFT(phi,[3,2,1])
 
 perm:=[3,2,1];
-BelyiMap:=LFT(phi,perm);
+BelyiMap:=LFT(phid,perm);
 a_sqfree:=SquarefreeFactorization(-6*BelyiMap);
 b_sqfree:=SquarefreeFactorization(-2*(27*BelyiMap+16));
 
@@ -63,7 +92,9 @@ b_sqfree:=SquarefreeFactorization(-2*(27*BelyiMap+16));
 
 for i in [1..10] do 
   q:=i*Q;i; q;
-
+  j:=BelyiMap(Q);
+  MestreObstructionIsSplit(6,j : LinYang:=false);
+end for; 
   aq:=a_sqfree(q);
   bq:=b_sqfree(q);
 

@@ -56,7 +56,7 @@ end intrinsic
 
 
 
-intrinsic NormalizingElementToGL4(x::AlgQuatElt,O::AlgQuatOrd: basis:=[]) -> GrpMatElt 
+intrinsic NormalizingElementToGL4(w::AlgQuatElt,O::AlgQuatOrd: basis:=[]) -> GrpMatElt 
   {O is an order over R. For an element g \in N_Bx(O) the map phi_g : b |--> g^-1bg
   is R-linear hence [g] is an element of M_4(R) after fixing a basis
   this function computes [g] and also returns the R-basis of O.}
@@ -72,10 +72,10 @@ intrinsic NormalizingElementToGL4(x::AlgQuatElt,O::AlgQuatOrd: basis:=[]) -> Grp
     M4R:=MatrixAlgebra(R,4);
     //ZmodN:=ResidueClassRing(N);
 
-    x_map:=Transpose(M4R![ Eltseq(O!(x^(-1)*b*x)) : b in basis ]);
+    w_map:=Transpose(M4R![ Eltseq(O!(w^(-1)*b*w)) : b in basis ]);
     assert Determinant(x_map) eq 1;
 
-    return GL(4,R)!x_map, basis;
+    return GL(4,R)!w_map, basis;
 end intrinsic;
 
 
@@ -180,7 +180,16 @@ intrinsic EnhancedSemidirectInGL4(Ocirc::AlgQuatEnh : basis:=[]) -> Map
 
   return mapfromenhancedimage;
 end intrinsic;
- 
+
+
+intrinsic EnhancedSemidirectInGL4(O::AlgQuatOrd : basis:=[]) -> Map 
+  {create the map from the semidirect product to GL4}
+
+  Ocirc:=EnhancedSemidirectProduct(O);
+  return EnhancedSemidirectInGL4(Ocirc);
+end intrinsic;
+
+
 
 intrinsic EnhancedSemidirectInGL4modN(Ocirc::AlgQuatEnh,N::RngIntElt : basis:=[]) -> Map 
   {create the map from the semidirect product to GL4}
@@ -200,6 +209,15 @@ intrinsic EnhancedSemidirectInGL4modN(Ocirc::AlgQuatEnh,N::RngIntElt : basis:=[]
   
   return mapfromenhancedimage;
 end intrinsic;
+
+
+intrinsic EnhancedSemidirectInGL4modN(O::AlgQuatOrd,N::RngIntElt : basis:=[]) -> Map 
+  {create the map from the semidirect product to GL4}
+
+  Ocirc:=EnhancedSemidirectProduct(O : N:=N);
+  return EnhancedSemidirectInGL4modN(Ocirc,N);
+end intrinsic;
+
 
 
 
@@ -249,13 +267,18 @@ intrinsic EnhancedImagePermutation(AutmuO::.,O::AlgQuatOrd, N::RngIntElt) -> Grp
 end intrinsic;
 
 
-intrinsic EnhancedElementRecord(elt::. : basis:=[]) -> Any
-  {given <w,x> in Autmu(O) \rtimes (O/N) return <w,x> as a 
+intrinsic EnhancedElementRecord(elt::AlgQuatEnhElt : basis:=[]) -> Any
+  {given <w,x> in Autmu(O) \rtimes (O/N)^x or Autmu(O) \rtimes O^x  return <w,x> as a 
   record along with its embedding in GL_4xGL_4 and just GL_4}
   
-  OmodN:=Parent(elt[2]);
-  O:=OmodN`quaternionorder;
-  N:=OmodN`quaternionideal;
+  Ocirc:=Parent(elt);
+  O:=Ocirc`quaternionorder;
+  R:=Ocirc`basering;
+  if R eq Integers() then 
+    N:=0;
+  else 
+    N:=Modulus(R);
+  end if;
 
   if basis ne [] then 
     basis:=Basis(O);
@@ -270,7 +293,11 @@ intrinsic EnhancedElementRecord(elt::. : basis:=[]) -> Any
 
   s := rec< RF | >;
   s`enhanced:=elt;
-  s`GL4xGL4:=<NormalizingElementToGL4modN(elt[1]`element,O,N : basis:=basis), UnitGroupToGL4modN(elt[2]`element,N : basis:=basis)>;
+  if N eq 0 then 
+    s`GL4xGL4:=<NormalizingElementToGL4(elt`element[1],O: basis:=basis), UnitGroupToGL4(elt`element[2] : basis:=basis)>;
+  else 
+    s`GL4xGL4:=<NormalizingElementToGL4modN(elt`element[1],O,N : basis:=basis), UnitGroupToGL4modN(elt`element[2],N : basis:=basis)>;
+  end if;
   s`GL4:=s`GL4xGL4[1]*s`GL4xGL4[2];
   return s;
 end intrinsic;
@@ -631,29 +658,34 @@ intrinsic AllEnhancedSubgroups(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : mi
     >
     ;
 
-  NBOplusgens:=NormalizerPlusGeneratorsEnhanced(O,mu);
-  NBOplusgensGL4:=[ EnhancedElementInGL4modN(g,N) : g in NBOplusgens ]; 
+  NBOplusgens_enhanced:=NormalizerPlusGeneratorsEnhanced(O,mu);
+  NBOplusgensGL4:=[ EnhancedElementInGL4modN(g,N) : g in NBOplusgens_enhanced ]; 
 
   G,Gelts:=EnhancedImageGL4(AutFull,O,N);
   assert -G!1 in G;
-  Gplus:=sub< G | NBOplusgensGL4 >;
-  assert #G/#Gplus eq 2;
+  G1plus:=sub< G | NBOplusgensGL4 >;
+  assert #G/#G1plus eq 2;
   GO:= G meet sub< GL(4,ResidueClassRing(N)) | UnitGroup(O,N) >;
   //assert #G/4 eq #GO; //if twisting
 
   ZmodN:=ResidueClassRing(N);
   Autmuimage:=[AutFull(c) : c in Domain(AutFull) ];
 
-  elliptic_eltsGL4:= [ EnhancedElementInGL4modN(e,N) : e in EnhancedEllipticElements(O,mu) ];
+  elliptic_elements_enhanced:=EnhancedEllipticElements(O,mu);
+  elliptic_eltsGL4:= [ EnhancedElementInGL4modN(e,N) : e in elliptic_elements_enhanced ];
   K:=[ k : k in SemidirectToNormalizerKernel(O,mu) ];
-  KG:=sub< Gplus | [ EnhancedElementInGL4modN(k,N) : k in K ] >;
+  KGlist:=[ EnhancedElementInGL4modN(k,N) : k in K ];
+  KG:=sub< G1plus | [ EnhancedElementInGL4modN(k,N) : k in K ] >;
+  assert #KG eq #K;
 
-  Gplusquo,Gmap:= quo< Gplus | KG >;
+  G1plusmodKG,Gmap:= quo< G1plus | KG >;
 
   minimal_subs_init:=<>;
   subs:=Subgroups(G);
+  i:=1;
   for H in subs do
-
+    i;
+    i:=i+1;
     Hgp:=H`subgroup;
     fixedspace:=FixedSubspace(Hgp);
 
@@ -662,21 +694,23 @@ intrinsic AllEnhancedSubgroups(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : mi
     order:=H`order;
     //index:=Order(G)/order;
 
-    Hplus := sub< Gplus | Hgp meet Gplus >;
-    HplusKG:= sub< Gplus | Hplus, KG >;
-    HplusKGquoalt:= quo< HplusKG | KG >;
+    H1plus := sub< G1plus | Hgp meet G1plus >;
+    H1plusKG:= sub< G1plus | H1plus, KG >;
+    H1plusKGmodKG:= quo< H1plusKG | KG >;
 
-    Hplusquo:=Gmap(Hplus);
-    if not IsIsomorphic(Hplusquo,HplusKGquoalt) then 
-      H;
+    H1plusquo:=Gmap(H1plus);
+    if not IsIsomorphic(H1plusquo,H1plusKGmodKG) then 
+      break;
     end if;
 
-    index:=#Gplusquo/#Hplusquo;
+    index:=#G1plusmodKG/#H1plusquo;
 
-    T:=CosetTable(Gplusquo,Hplusquo);
-    piH:=CosetTableToRepresentation(Gplusquo,T);
+    T:=CosetTable(G1plusmodKG,H1plusquo);
+    piH:=CosetTableToRepresentation(G1plusmodKG,T);
     //piH := EnhancedCosetRepresentation(G,Hgp,Gammastar_plus);
     sigma := [ piH(Gmap(v)) : v in elliptic_eltsGL4 ];
+    &*(sigma);
+    assert &*(sigma) eq Id(Parent(sigma[1]));
     genus:=EnhancedGenus(sigma);
 
     Henh:=[ g`enhanced : g in Gelts | g`GL4 in Hgp ];
