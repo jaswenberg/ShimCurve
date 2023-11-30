@@ -185,9 +185,17 @@ intrinsic '*'(g1::AlgQuatEnhElt,g2::AlgQuatEnhElt) -> AlgQuatEnhElt
   assert Type(U) in [AlgQuatOrd, AlgQuatOrdRes];
   w2elt:=w2`element;
 
-  assert (w2elt^-1)*x1*w2elt in U;
+  if Type(U) eq AlgQuatOrdRes then 
+    x1elt:=x1`element;
+    x2elt:=x2`element;
+  else 
+    x1elt:=x1;
+    x2elt:=x2;
+  end if;
+
+  //assert (w2elt^-1)*x1elt*w2elt in U;
   Ocirc:=Parent(g1);
-  return Ocirc!<w1*w2, U!((w2elt^-1)*x1*w2elt*x2) >;
+  return Ocirc!<w1*w2, U!((w2elt^-1)*x1elt*w2elt*x2elt) >;
 end intrinsic;
 
 

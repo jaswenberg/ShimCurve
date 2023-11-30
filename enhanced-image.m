@@ -72,8 +72,8 @@ intrinsic NormalizingElementToGL4(w::AlgQuatElt,O::AlgQuatOrd: basis:=[]) -> Grp
     M4R:=MatrixAlgebra(R,4);
     //ZmodN:=ResidueClassRing(N);
 
-    w_map:=Transpose(M4R![ Eltseq(O!(w^(-1)*b*w)) : b in basis ]);
-    assert Determinant(x_map) eq 1;
+    w_map:=M4R![ Eltseq(O!(w^(-1)*b*w)) : b in basis ];
+    assert Determinant(w_map) eq 1;
 
     return GL(4,R)!w_map, basis;
 end intrinsic;
@@ -127,7 +127,7 @@ intrinsic UnitGroupToGL4(x::AlgQuatOrdElt : basis:=[]) -> GrpMatElt
   M4R:=MatrixAlgebra(R,4);
   //ZmodN:=ResidueClassRing(N);
 
-  x_map:=Transpose(M4R![ Eltseq(O!(b*x)) : b in basis ]);
+  x_map:=M4R![ Eltseq(O!(b*x)) : b in basis ];
   //assert ZmodN!Determinant(x_map) ne 0;
   return M4R!x_map;
 end intrinsic;
@@ -169,13 +169,13 @@ intrinsic EnhancedSemidirectInGL4(Ocirc::AlgQuatEnh : basis:=[]) -> Map
     basis:=Basis(O);
   end if;
   GL4:=GL(4,R);
-  if R eq Integers() then 
+  if Type(R) eq RngInt then 
     mapfromenhancedimage := map<  Ocirc -> GL4  |  
     s :-> NormalizingElementToGL4((s`element)[1],O : basis:=basis)*UnitGroupToGL4((s`element)[2] : basis:=basis)  >;
   else 
     N:=Modulus(R);
     mapfromenhancedimage := map<  Ocirc -> GL4  |  
-    s :-> NormalizingElementToGL4modN(s[1],O,N : basis:=basis)*UnitGroupToGL4modN(s[2],N : basis:=basis)  >;
+    s :-> NormalizingElementToGL4modN((s`element)[1],O,N : basis:=basis)*UnitGroupToGL4modN(((s`element)[2])`element,N: basis:=basis)  >;
   end if;
 
   return mapfromenhancedimage;
@@ -274,7 +274,7 @@ intrinsic EnhancedElementRecord(elt::AlgQuatEnhElt : basis:=[]) -> Any
   Ocirc:=Parent(elt);
   O:=Ocirc`quaternionorder;
   R:=Ocirc`basering;
-  if R eq Integers() then 
+  if Type(R) eq RngInt then 
     N:=0;
   else 
     N:=Modulus(R);
@@ -308,6 +308,7 @@ intrinsic EnhancedImageGL4(AutmuO::Map, OmodN::AlgQuatOrdRes) -> GrpMat
 
   O:=OmodN`quaternionorder;
   N:=OmodN`quaternionideal;
+  Ocirc:=EnhancedSemidirectProduct(O: N:=N);
   basis:=Basis(O);
   assert MapIsHomomorphism(AutmuO : injective:=true);
   H:=Domain(AutmuO);
@@ -317,7 +318,7 @@ intrinsic EnhancedImageGL4(AutmuO::Map, OmodN::AlgQuatOrdRes) -> GrpMat
  
   auts:=[ AutmuO(a) : a in Domain(AutmuO) ];
 
-  enhancedimage_cartesian:=[ c: c in CartesianProduct(auts, UnitElements) ];
+  enhanced_elements:=[ Ocirc!<w,x> : w in auts, x in UnitElements ];
 
   RF := recformat< n : Integers(),
   enhanced,
@@ -327,10 +328,10 @@ intrinsic EnhancedImageGL4(AutmuO::Map, OmodN::AlgQuatOrdRes) -> GrpMat
   ;
 
   enhancedimage:=[];
-  for elt in enhancedimage_cartesian do 
+  for elt in enhanced_elements do 
     s := rec< RF | >;
     s`enhanced:=elt;
-    s`GL4xGL4:=<NormalizingElementToGL4modN(elt[1],O,N: basis:=basis), UnitGroupToGL4modN(elt[2]`element,N : basis:=basis)>;
+    s`GL4xGL4:=<NormalizingElementToGL4modN(elt`element[1],O,N: basis:=basis), UnitGroupToGL4modN((elt`element[2])`element,N : basis:=basis)>;
     s`GL4:=s`GL4xGL4[1]*s`GL4xGL4[2];
     Append(~enhancedimage,s);
   end for;
@@ -348,6 +349,9 @@ intrinsic EnhancedImageGL4(AutmuO::Map, OmodN::AlgQuatOrdRes) -> GrpMat
   EnhancedImageToGL4 := mapfromenhancedimage*maptogroup;
   */
   semidirGL4:= sub< GL(4,ZmodN) |  [ x`GL4 : x in enhancedimage ] >;
+
+  assert forall(u){ <s,t> : s in RandomSubset({1..#enhancedimage},10), t in RandomSubset({1..#enhancedimage},10) 
+  | EnhancedElementInGL4(enhancedimage[s]`enhanced*enhancedimage[t]`enhanced) eq enhancedimage[s]`GL4*enhancedimage[t]`GL4 }; 
 
   return semidirGL4,enhancedimage;
 end intrinsic;
@@ -566,7 +570,7 @@ intrinsic Aut(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> Any
 end intrinsic;
 
 
-intrinsic EnhancedCosetRepresentation(H::GrpMat, G::GrpMat,O::AlgQuatOrd,mu::AlgQuatOrdElt) -> Any 
+/*intrinsic EnhancedCosetRepresentation(H::GrpMat, G::GrpMat,O::AlgQuatOrd,mu::AlgQuatOrdElt) -> Any 
   {Make the coset representation of H in G}
   N:=#BaseRing(H);
 
@@ -594,7 +598,7 @@ intrinsic EnhancedCosetRepresentation(H::GrpMat, G::GrpMat,O::AlgQuatOrd,mu::Alg
 
   return piH;
 end intrinsic;
-
+*/
 
 intrinsic EnhancedRamificationData(H::GrpMat, G::GrpMat,O::AlgQuatOrd,mu::AlgQuatOrdElt) -> Any
   {return the image of the elliptic elements under the monodromy map}
@@ -672,6 +676,8 @@ intrinsic AllEnhancedSubgroups(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : mi
   Autmuimage:=[AutFull(c) : c in Domain(AutFull) ];
 
   elliptic_elements_enhanced:=EnhancedEllipticElements(O,mu);
+  assert forall(u){ <u,v> : u,v in elliptic_elements_enhanced | 
+  EnhancedElementInGL4modN(u,N)*EnhancedElementInGL4modN(v,N) eq EnhancedElementInGL4modN(u*v,N) };
   elliptic_eltsGL4:= [ EnhancedElementInGL4modN(e,N) : e in elliptic_elements_enhanced ];
   K:=[ k : k in SemidirectToNormalizerKernel(O,mu) ];
   KGlist:=[ EnhancedElementInGL4modN(k,N) : k in K ];
@@ -682,10 +688,8 @@ intrinsic AllEnhancedSubgroups(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : mi
 
   minimal_subs_init:=<>;
   subs:=Subgroups(G);
-  i:=1;
+
   for H in subs do
-    i;
-    i:=i+1;
     Hgp:=H`subgroup;
     fixedspace:=FixedSubspace(Hgp);
 
@@ -709,14 +713,13 @@ intrinsic AllEnhancedSubgroups(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : mi
     piH:=CosetTableToRepresentation(G1plusmodKG,T);
     //piH := EnhancedCosetRepresentation(G,Hgp,Gammastar_plus);
     sigma := [ piH(Gmap(v)) : v in elliptic_eltsGL4 ];
-    &*(sigma);
     assert &*(sigma) eq Id(Parent(sigma[1]));
     genus:=EnhancedGenus(sigma);
 
     Henh:=[ g`enhanced : g in Gelts | g`GL4 in Hgp ];
-    Hautmus:= Setseq(Set([ h[1] : h in Henh ]));
-    rho_end_norms:= Set([ Abs(SquarefreeFactorization(Integers()!Norm(w[1]`element))) : w in Henh ]);
-    rho_end:= sub< GL(4,ZmodN) | [ NormalizingElementToGL4modN(w[1],O,N) : w in Henh ] >;
+    Hautmus:= Setseq(Set([ h`element[1] : h in Henh ]));
+    rho_end_norms:= Set([ Abs(SquarefreeFactorization(Integers()!Norm((w`element)[1]`element))) : w in Henh ]);
+    rho_end:= sub< GL(4,ZmodN) | [ NormalizingElementToGL4modN(w`element[1],O,N) : w in Henh ] >;
     // rho_end_size:=Integers()!#Hgp/(#(GO meet Hgp));
 
     is_split:=true;
@@ -786,7 +789,7 @@ intrinsic AllEnhancedSubgroups(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : mi
         Write(filename,"Genus ? (Fuchsian) Index ? #H ? Torsion ? Gal(L|Q) ? AutmuO norms ? Split semidirect ? Generators ? Ramification Data");
 
         for s in minimal_subs_init do 
-          gens_readable:=[ Sprintf("< %o, %o >", g[1], Eltseq(g[2]`element)) : g in s`generators ];
+          gens_readable:=[ Sprintf("< %o, %o >", g`element[1], Eltseq((g`element[2])`element)) : g in s`generators ];
           gens_readable;
           Write(filename,Sprintf("%o ? %o ? %o ? %o ? %o ? %o ? %o ? %o ? %o", s`genus, s`index, s`order, s`fixedsubspace, s`endomorphism_representation, s`AutmuO_norms, s`split, gens_readable, Sprint(s`ramification_data : oneline:=true)));
         end for;
