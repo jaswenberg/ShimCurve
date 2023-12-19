@@ -10,4 +10,5 @@
   genera.m
   read-write.m
   mod2image.m
+  mod2-enhanced-image.m
 }

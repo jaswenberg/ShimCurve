@@ -424,9 +424,10 @@ intrinsic FixedSubspace(H::GrpMat) -> GrpAb
 end intrinsic;
 
 
-intrinsic HasPolarizedElementOfDegree(O::AlgQuatOrd,d::RngIntElt) -> BoolElt, AlgQuatOrdElt 
+intrinsic HasPolarizedElementOfDegree(O::AlgQuatOrd,d::RngIntElt) -> BoolElt, AlgQuatElt 
   {return an element mu of O such that mu^2 + d*disc(O) = 0 if it exists.}
   disc:=Discriminant(O);
+  B:=QuaternionAlgebra(O);
   Rx<x>:=PolynomialRing(Rationals());
   Em<v>:=NumberField(x^2+d*disc);
   if IsSplittingField(Em,QuaternionAlgebra(O)) then 
@@ -441,20 +442,20 @@ intrinsic HasPolarizedElementOfDegree(O::AlgQuatOrd,d::RngIntElt) -> BoolElt, Al
         mu:=c*zO;
         assert mu^2+d*disc eq 0;
         assert mu in O;
-        return true, O!mu;
+        return true, B!mu;
       else 
         assert zO^3 eq 1;
         tr,c:=IsSquare(Integers()!d*disc/3);
         mu:=(2*zO+1)*c;
         assert mu^2+d*disc eq 0;
         assert mu in O;
-        return true,O!mu;
+        return true,B!mu;
       end if;
     else 
       Rm:=Order([1,v]);
       mu,emb:=Embed(Rm,O);
       assert mu^2+d*disc eq 0;
-      return true, O!mu;
+      return true, B!mu;
     end if;
   else 
     return false;
@@ -476,6 +477,7 @@ intrinsic IsTwisting(O::AlgQuatOrd,mu::AlgQuatElt) -> BoolElt
   {(O,mu) is twisting (of degree del = -mu^2/disc(O)) if there exists chi in O and N_Bx(O)
    such that chi^2 = m, m|Disc(O) and mu*chi = -chi*mu }
 
+  Rx<x>:=PolynomialRing(Rationals());
   tr,nmu:= IsScalar(mu^2);
   disc:=Discriminant(O);
   del:=DegreeOfPolarizedElement(O,mu);
@@ -487,7 +489,10 @@ intrinsic IsTwisting(O::AlgQuatOrd,mu::AlgQuatElt) -> BoolElt
   Bram<i1,j1>:=QuaternionAlgebra< Rationals() | -disc*del, m>;
   tr,isom:=IsIsomorphic(Bram, B : Isomorphism:=true);
     if tr eq true then
-
+      assert isom(i1) eq mu;
+      //Em<v>:=NumberField(x^2-m);
+      //Rm:=Order([1,v]);
+      //chi,emb:=Embed(Rm,O);    
       chi:=isom(j1);
       if mu*chi eq -chi*mu and chi in O then
         twisted_basis:=[1,mu,chi,mu*chi];
