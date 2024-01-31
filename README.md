@@ -12,7 +12,7 @@ G plays the role of GL_2(Z/NZ), (O/N)^x is where the Galois representation lives
 Types
 
 Since it is not straightforward to work with G directly in MAGMA, new 'types' have been created to support it. These are:
-- AlgQuatProj :: B^x/Qx, the quaternion algebra modulo scalars :: QuaternionAlgebraModuloScalars(B::AlgQuat)
+- AlgQuatProj :: B^x/Q^x, the quaternion algebra modulo scalars :: QuaternionAlgebraModuloScalars(B::AlgQuat)
 - AlgQuatProjElt :: an element of AlgQuatProj :: ElementModuloScalars(BxmodFx::AlgQuatProj, x::AlgQuatElt)
 - AlgOrdRes :: O/N :: quo(O::AlgQuatOrd, N::RngIntElt)
 - AlgOrdResElt :: an element of AlgOrdRes :: OmodNElement(OmodN::AlgQuatOrdRes, x::AlgQuatOrdElt)
