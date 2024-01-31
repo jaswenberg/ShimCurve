@@ -68,5 +68,35 @@ intrinsic EnhancedSemidirectInGL4(Ocirc::AlgQuatEnh : basis:=[]) -> Map
   {create the map from the semidirect product to GL4(R). R depends on the base 
   ring of Ocirc.}
 
+intrinsic EnhancedElementInGL4(g::AlgQuatEnhElt : basis:=[]) -> GrpMatElt
+  {the enhanced element in GL4(R), R depends on the base ring of g}
+
+intrinsic EnhancedElementRecord(elt::AlgQuatEnhElt : basis:=[]) -> Any
+  {given <w,x> in Autmu(O) \rtimes (O/N)^x or Autmu(O) \rtimes O^x  return <w,x> as a 
+  record along with its embedding in GL_4xGL_4 and just GL_4}
+
+intrinsic EnhancedImageGL4(AutmuO::Map, OmodN::AlgQuatOrdRes) -> GrpMat
+  {return the image of the enhanced semidirect product group G in GL4(Z/NZ). The second return value 
+
+intrinsic NormalizerPlusGenerators(O::AlgQuatOrd) -> SeqEnum 
+  {return generators of the positive norm elements which normalize O}
+
+intrinsic SemidirectToNormalizerKernel(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> SeqEnum 
+  {return the kernel of the map form the enhanced semidirect product to N_B^x(O). 
+  It is necessarily cyclic and the second value is the generator of the group}
+
+intrinsic NormalizerPlusGeneratorsEnhanced(O::AlgQuatOrd,mu::AlgQuatOrdElt) -> Tup 
+  {return generators of the positive norm elements which normalize O in the enhanced semidirect product}
+
+intrinsic EnhancedRamificationData(H::GrpMat, G::GrpMat,O::AlgQuatOrd,mu::AlgQuatElt) -> Any
+  {return the image of the elliptic elements under the monodromy map}
+
+intrinsic EnhancedGenus(sigma::SeqEnum) -> RngIntElt
+  {Compute genus from permutation triple
+   f:X -> Y. 2gX-2 = deg(f)*(2gY-2) + sum_x\inX (ex -1). 
+   ex is the ramification degree of x. An element of S_n acts on sheets of the cover. 
+  x is ramified if x is sent to another point under the action of an isotropy subgroup,
+  i.e. the cycle type corresponding to x has length >1. The length is the ramification degree.}
+
 
 
