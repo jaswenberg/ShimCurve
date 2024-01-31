@@ -2,7 +2,7 @@ The code in this repo is for Shimura curves with level structure. It can be used
 
 Fix (O,\pm mu,N) where O is (a maximal) order in an indefinite rational quaternion algebra B, mu is a polarized element and N is an integer. 
 
-In analogy with the H < GL_2(Z/NZ) for modular curves, there is a H which depends on on the triple above and has an associated Shimura curve X_H. This requires some more explanation. 
+In analogy with the H < GL_2(Z/NZ) for modular curves, there is a H which depends on on the triple above and has an associated Shimura curve X_H. This requires some more explanation: 
 - Let \Aut_{\pm \mu}(O) be the automorphisms of O which preserve \pm \mu
 - (O/N)^x is just the units of the ring O/N
 - G = \Aut_{\pm \mu}(O) \ltimes (O/N)^x, with the semidirect product naturally defined.
@@ -12,7 +12,11 @@ G plays the role of GL_2(Z/NZ), (O/N)^x is where the Galois representation lives
 Types
 
 Since it is not straightforward to work with G directly in MAGMA, new 'types' have been created to support it. These are:
-- AlgQuatProj:: B^x/Qx, the quaternion algebra modulo scalars
-- AlgQuatProjElt:: an element of AlgQuatProj
+- AlgQuatProj :: B^x/Qx, the quaternion algebra modulo scalars :: QuaternionAlgebraModuloScalars(B::AlgQuat)
+- AlgQuatProjElt :: an element of AlgQuatProj :: ElementModuloScalars(BxmodFx::AlgQuatProj, x::AlgQuatElt)
+- AlgOrdRes :: O/N :: quo(O::AlgQuatOrd, N::RngIntElt)
+- AlgOrdResElt :: an element of AlgOrdRes :: OmodNElement(OmodN::AlgQuatOrdRes, x::AlgQuatOrdElt)
+- AlgQuatEnh :: the semidirect product G, allows for N=0 :: EnhancedSemidirectProduct(O::AlgQuatOrd: N:=0)
+- AlgQuatEnhElt :: an element of G :: EnhancedElement(Ocirc::AlgQuatEnh, tup::<>)
 
 
