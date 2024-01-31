@@ -19,4 +19,27 @@ Since it is not straightforward to work with G directly in MAGMA, new 'types' ha
 - AlgQuatEnh :: the semidirect product G, allows for N=0 :: EnhancedSemidirectProduct(O::AlgQuatOrd: N:=0)
 - AlgQuatEnhElt :: an element of G :: EnhancedElement(Ocirc::AlgQuatEnh, tup::<>)
 
+Example usage:
+> B<i,j>:=QuaternionAlgebra<RationalField() | 3, -1>;
+> O:=MaximalOrder(B);
+> BxmodQx:=QuaternionAlgebraModuloScalars(B);
+> OmodN:=quo(O,3);
+> w:=BxmodQx!(-3*j+3*i*j);
+> w^2;
+18
+> w^2 eq BxmodQx!1;
+true 18
+> Genh:=EnhancedSemidirectProduct(O: N:=3);
+> x:=OmodN!2;
+> Genh!<w,x>
+> ;
+<-3*j + 3*k, [2 0 0 0]>
+> Genh!<1,1> eq (Genh!<w,x>)^2;
+true
+
+
+Main Intrinsics
+
+
+
 
