@@ -40,6 +40,33 @@ true
 
 Main Intrinsics
 
+intrinsic HasPolarizedElementOfDegree(O::AlgQuatOrd,d::RngIntElt) -> BoolElt, AlgQuatElt 
+  {return an element mu of O such that mu^2 + d*disc(O) = 0 if it exists.}
+
+intrinsic IsTwisting(O::AlgQuatOrd,mu::AlgQuatElt) -> BoolElt
+  {(O,mu) is twisting (of degree del = -mu^2/disc(O)) if there exists chi in O and N_Bx(O)
+   such that chi^2 = m, m|Disc(O) and mu*chi = -chi*mu. Return true or false; if true 
+   return [mu, chi] up to scaling}
+   
+intrinsic Aut(O::AlgQuatOrd,mu::AlgQuatElt) -> Any
+  {Return Aut_{\pm mu}(O). It will be a map from D_n to B^x/Q^x where the codomain 
+  is Aut_{\pm mu}(O)}
+
+intrinsic NormalizingElementToGL4(w::AlgQuatElt,O::AlgQuatOrd: basis:=[]) -> GrpMatElt 
+intrinsic NormalizingElementToGL4modN(w::AlgQuatElt,O::AlgQuatOrd, N::RngIntElt : basis:=[]) -> GrpMatElt 
+  {O is an order over R. For an element g \in N_Bx(O) the map phi_g : b |--> g^-1bg
+  is R-linear hence [g] is an element of M_4(R) after fixing a basis
+  this function computes [g] and also returns the R-basis of O.}
+
+intrinsic UnitGroupToGL4(x::AlgQuatOrdElt : basis:=[]) -> GrpMatElt 
+intrinsic UnitGroupToGL4modN(x::AlgQuatOrdElt,N::RngIntElt : basis:=[]) -> GrpMatElt 
+  {O is an order over R, this returns a matrix [lambda_g] wrt to a basis
+  which is the right regular representation
+  lambda_x : y --> y*x where g \in GL_1(O)}
+
+intrinsic EnhancedSemidirectInGL4(Ocirc::AlgQuatEnh : basis:=[]) -> Map 
+  {create the map from the semidirect product to GL4(R). R depends on the base 
+  ring of Ocirc.}
 
 
 
