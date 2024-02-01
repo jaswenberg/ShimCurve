@@ -98,5 +98,105 @@ intrinsic EnhancedGenus(sigma::SeqEnum) -> RngIntElt
   x is ramified if x is sent to another point under the action of an isotropy subgroup,
   i.e. the cycle type corresponding to x has length >1. The length is the ramification degree.}
 
+intrinsic EnumerateH(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : minimal:=false,PQMtorsion:=false,verbose:=true, lowgenus:=false, write:=false) -> Any
+  {return all of the enhanced subgroups in a list with each one being a record}
+
+Example
+
+> B<i,j,k>:=QuaternionAlgebra< Rationals() | 3,-1 >;
+> O:=QuaternionOrder([ 1, 1/2 + 1/2*i + 1/2*j + 1/2*k, 1/2 - 1/2*i + 1/2*j - 1/2*k, 1/2 - 1/2*i - 1/2*j + 1/2*k\
+ ]);
+> N:=4;
+> Ocirc:=EnhancedSemidirectProduct(O : N:=4);
+> 
+> tr,mu:=HasPolarizedElementOfDegree(O,1);
+> mu;
+-3*j + k
+> assert mu^2 eq -6;
+> IsTwisting(O,mu);
+true [ -3*j + k, -j + k ]
+> AutmuO:=Aut(O,mu);
+> AutmuO;
+Mapping from: GrpPC to Quotient by scalars of Quaternion Algebra with base ring Rational Field, defined by i^2 = 3, j^2 = -1
+<Id($), 1>
+<$.1, -3*j + k>
+<$.2, -j + k>
+<$.1 * $.2, -2*i>
+> 
+> 
+> Hgens:=[ Ocirc!< 1, [ 1, 0, 2, 0 ] >, Ocirc!< 1, [ 3, 1, 0, 1 ] >, Ocirc!< 1, [ 1, 2, 2, 0 ] >, Ocirc!< 1, [ \
+3, 0, 3, 3 ] >, Ocirc!< 1, [ 3, 2, 3, 1 ] >, Ocirc!< 1, [ 3, 0, 0, 0 ] >, Ocirc!< -3*j + k, [ 2, 0, 1, 0 ] > ];
+> HgensGL4:=[ EnhancedElementInGL4modN(g,N) : g in Hgens ];
+> HGL4:=sub< GL(4,ResidueClassRing(N)) | HgensGL4 >;
+> 
+> EnhancedElementRecord(Hgens[2]);
+rec<recformat<n: IntegerRing(), enhanced, GL4xGL4, GL4> | 
+enhanced := <1, [3 1 0 1]>,
+GL4xGL4 := <
+[1 0 0 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1],
+
+[3 1 0 1]
+[0 2 1 0]
+[0 3 2 0]
+[2 3 3 1]
+>,
+GL4 := [3 1 0 1]
+[0 2 1 0]
+[0 3 2 0]
+[2 3 3 1]>
+> 
+> FixedSubspace(HGL4);
+Abelian Group isomorphic to Z/2
+Defined on 1 generator in supergroup:
+$.1 = 2*$.2 + 2*$.4
+Relations:
+2*$.1 = 0
+> 
+> G:=EnhancedImageGL4(AutmuO,O,N);
+> elliptic:=EnhancedEllipticElements(O,mu);
+> elliptic; 
+[
+<-3*j + k, [1 0 0 0]>,
+<-j + k, [ 0  0 -1  0]>,
+<-2*i, [-1  0  0  1]>
+]
+> 
+> mon:=EnhancedRamificationData(HGL4,G,O,mu);
+> mon;
+[
+(1, 2)(3, 4),
+(1, 3)(2, 5)(4, 6),
+(1, 4, 6, 3, 2, 5)
+]
+> Genus(mon);
+0
+
+Data
+
+The list of H for each triple (O,\pm mu, N) is currently stored as a string in data/genera-tables with the following columns:
+Genus ? (Fuchsian) Index ? #H ? Torsion ? Gal(L|Q) ? AutmuO norms ? Split semidirect ? Generators ? Ramification Data
+
+To load the data type
+> list := GeneraTableToRecords(6,1,3);
+> list[50];
+rec<recformat<n: IntegerRing(), genus, fuchsindex, torsioninvariants, endogroup, AutmuOnorms, Hsplit, generators, ramification_data> | 
+genus := 1,
+fuchsindex := 12,
+torsioninvariants := [],
+endogroup :=  C1 ,
+AutmuOnorms := { 1 },
+Hsplit := true,
+generators :=  [ < 1, [ 2, 0, 0, 0 ] >, < 1, [ 2, 0, 2, 2 ] >, < 1, [ 0, 0, 1, 2 ] > ] ,
+ramification_data := [
+(1, 2)(3, 4)(5, 6)(7, 9)(8, 10)(11, 12),
+(1, 3)(2, 5)(4, 7, 11, 10)(6, 9, 12, 8),
+(1, 4, 8, 11, 9, 5)(2, 6, 10, 12, 7, 3)
+]>
+
+
+
 
 
