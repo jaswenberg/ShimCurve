@@ -21,7 +21,7 @@ Since it is not straightforward to work with G directly in MAGMA, new 'types' ha
 - AlgQuatEnhElt :: an element of G :: EnhancedElement(Ocirc::AlgQuatEnh, tup::<>)
 ```
 
-Example usage:
+Example
 ```
 > B<i,j>:=QuaternionAlgebra<RationalField() | 3, -1>;
 > O:=MaximalOrder(B);
