@@ -1,14 +1,25 @@
-{
-  generate-PQMcurves.m
-  igusa-invariants.m
-  torsion.m
-  cartan_subgroups.m
-  LFT.m
-  utils.m
-  enhanced-image.m
-  enhanced-constructors.m
-  genera.m
-  read-write.m
-  mod2image.m
-  mod2-enhanced-image.m
-}
+code
+  { 
+  level-structure
+      {
+      aut_mu_O.m
+      elliptic-elements.m
+      embed-in-GL4.m
+      enumerate-H.m
+      enhanced-constructors.m
+      genera.m
+      igusa-invariants.m
+      LFT.m
+      polarization-twisting.m
+      }
+  pqm-surfaces
+      {
+      mod2image.m
+      mod2-enhanced-image.m
+      }
+  utils
+     {
+      utils.m
+      read-write.m
+      }
+  }
