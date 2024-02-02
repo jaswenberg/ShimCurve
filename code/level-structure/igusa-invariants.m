@@ -1,6 +1,6 @@
 
 intrinsic PQMIgusaClebschDisc6(j::FldRatElt : LinYang:=true) -> SeqEnum
-  {Given j from Baba-Granath's discriminant 6 family,
+  {Given j from Baba-Granaths discriminant 6 family,
   create the Igusa-Clebsch invariants of the curve associated to j.}
 
   // The Igusa invariants from Baba-Granath for D=6
