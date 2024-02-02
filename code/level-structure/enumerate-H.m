@@ -3,7 +3,7 @@
 
 
 
-intrinsic EnumerateH(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : minimal:=false,PQMtorsion:=false,verbose:=true, lowgenus:=false, write:=false) -> Any
+intrinsic EnumerateH(O::AlgQuatOrd,mu::AlgQuatElt,N::RngIntElt : minimal:=false,PQMtorsion:=false,verbose:=true, lowgenus:=false, write:=false) -> Any
   {return all of the enhanced subgroups in a list with each one being a record}
   if write eq true then 
     assert verbose eq true;
@@ -150,7 +150,7 @@ intrinsic EnumerateH(O::AlgQuatOrd,mu::AlgQuatOrdElt,N::RngIntElt : minimal:=fal
         printf "%o ? %o ? %o ? %o ? %o ? %o ? %o ? %o \n", s`genus, s`index, s`order, s`fixedsubspace, s`endomorphism_representation, s`AutmuO_norms, s`split, s`generators, Sprint(s`ramification_data : oneline:=true);
       end for;
       if write eq true then 
-        filename:=Sprintf("ShimCurve/genera-tables/genera-D%o-deg%o-N%o.m",D,del,N);
+        filename:=Sprintf("ShimCurve/data/genera-tables/genera-D%o-deg%o-N%o.m",D,del,N);
         Write(filename,Sprintf("%m;",B));
         Write(filename,Sprintf("%o;",Basis(O)));
         Write(filename,Sprintf("%o;",N));

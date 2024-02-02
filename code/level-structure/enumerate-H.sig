@@ -1,5 +1,5 @@
 177,0
-S,EnumerateH,return all of the enhanced subgroups in a list with each one being a record,0,3,0,0,0,0,0,0,0,148,,0,0,20,,0,0,19,,-1,-38,-38,-38,-38,-38
+S,EnumerateH,return all of the enhanced subgroups in a list with each one being a record,0,3,0,0,0,0,0,0,0,148,,0,0,18,,0,0,19,,-1,-38,-38,-38,-38,-38
 S,EnumerateH,,0,3,0,0,0,0,0,0,0,148,,0,0,20,,0,0,17,,-1,-38,-38,-38,-38,-38
 S,EnumerateH,,0,3,0,0,0,0,0,0,0,148,,0,0,148,,0,0,19,,-1,-38,-38,-38,-38,-38
 S,EnumerateH,,0,3,0,0,0,0,0,0,0,148,,0,0,148,,0,0,17,,-1,-38,-38,-38,-38,-38
