@@ -1,4 +1,9 @@
 
+intrinsic ReplaceAll(string::MonStgElt, char1::MonStgElt, char2::MonStgElt) -> MonStgElt
+  {Replace all instances of the string char1 with char2 in string}
+  return Pipe(Sprintf("sed \"s/%o/%o/g\"", char1, char2), string);
+end intrinsic;
+
 
 
 intrinsic getLines(file::MonStgElt) -> Any
