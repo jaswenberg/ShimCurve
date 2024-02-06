@@ -63,9 +63,9 @@ def has_rational_CM_pts_lvl1(D,d,Wnorms):
         return false
 
     # now check complex conjugation
-    D_inert = D.prime_to_m_part(d) # this should be the product of primes dividing D inert in S
-    if not (D_inert in Wnorms):
-        print("Note: complex conjugation does not act trivially")
-        return false
+    for m in Wnorms:
+        if d % (D/m) == 0:
+            return true
     # if we get to this point, then we should have rational CM points!
-    return true
+    print("Note: complex conjugation does not act trivially")
+    return false
